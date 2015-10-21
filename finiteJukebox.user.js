@@ -6,7 +6,7 @@
 // @description  Allows recording audio from Infinite Jukebox to a wav file.
 // @author       Kevin Wong
 // @match        *://labs.echonest.com/Uploader/index.html?trid=*
-// @grant        none
+// @grant        GM_addStyle
 // @require      https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.min.js
 // ==/UserScript==
 
@@ -17,6 +17,8 @@
 // Wav Export based on recorder.js by Matt Diamond
 // https://github.com/mattdiamond/Recorderjs
 //
+
+GM_addStyle("#finite_jukebox_buttons > .cbut { margin: 2px; } ");
 
 (function() {
 
@@ -328,10 +330,14 @@
     // Buttons
     ////////////////////////////////////////////////////////////////////////////
 
-    $("#button-panel").append('<button class="cbut" id="record"> Record</button>\n');
-    $("#button-panel").append('<button class="cbut" id="timed_record"> Timed Record</button>\n');
-    $("#button-panel").append('<button class="cbut" id="download"> Download</button>\n');
+    var buttonDiv = $("<div>", {id: "finite_jukebox_buttons", style: "background:#222; top:10px; right:10px; position:absolute; text-align: right; padding: 10px;"});
+    buttonDiv.appendTo("body");
 
+    var recordDiv = $("<div>");
+    buttonDiv.append($("<button>", {id: "record", class: "cbut"}).html("Record"));
+    buttonDiv.append($("<button>", {id: "timed_record", class: "cbut"}).html("Timed Record")).append($("<br>"));
+    buttonDiv.append($("<button>", {id: "fastmode", class: "cbut"}).html("Fast Mode: OFF")).append($("<br>"));
+    buttonDiv.append($("<button>", {id: "download", class: "cbut"}).html("Download"));
 
     // Start/Stop button. This is a default button
     $("#go").click(updateState);
@@ -368,6 +374,7 @@
         updateState();
     });
 
+    // Download button
     var exportingFile = false;
     $("#download").click(function() {
         exportingFile = true;
@@ -381,6 +388,12 @@
             exportingFile = false;
             updateState();
         });
+    });
+
+    // fastmode button
+    $("#fastmode").click(function() {
+        fastMode = !fastMode;
+        updateState();
     });
 
     $(window).on("load", function() {
@@ -514,18 +527,20 @@
             durationString = "\xa0";
         }
 
-        $("#record").text(" " + (normalRecording ? "" + durationString : "Record"));
-        $("#timed_record").text(" " + (timedRecording ? "" + durationString : "Timed Record"));
+        $("#record").text(normalRecording ? "" + durationString : "Record");
+        $("#timed_record").text(timedRecording ? "" + durationString : "Timed Record");
         if (exportingFile) {
-            $("#download").text(" " + "Exporting file...");
+            $("#download").text("Exporting file...");
         } else {
-            $("#download").text(" " + (hasRecording ? "Download " + durationString : "Download"));
+            $("#download").text(hasRecording ? "Download " + durationString : "Download");
         }
+        $("#fastmode").text("Fast Mode: " + (fastMode ? "ON" : "OFF"));
 
         // Enable/disable buttons as necessary
         $("#record").prop("disabled", driver == null || (recorder.isRecording() && !normalRecording));
         $("#timed_record").prop("disabled", driver == null || (recorder.isRecording() && !timedRecording));
         $("#download").prop("disabled", !hasRecording);
+        $("#fastmode").prop("disabled", driver == null);
     }
 
     var getDurationString = function(seconds) {
@@ -546,4 +561,4 @@
         return timeString;
     }
 
-    })();
+})();
