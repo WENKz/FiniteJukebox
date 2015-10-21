@@ -2,7 +2,7 @@
 // @name         Finite Jukebox
 // @namespace    https://github.com/kwongius/
 // @homepageURL  https://github.com/kwongius/FiniteJukebox
-// @version      0.1
+// @version      0.1.1
 // @description  Allows recording audio from Infinite Jukebox to a wav file.
 // @author       Kevin Wong
 // @match        *://labs.echonest.com/Uploader/index.html?trid=*
