@@ -344,18 +344,22 @@ GM_addStyle("#finite_jukebox_buttons > .cbut { margin: 2px; } ");
 
     // Record button
     $("#record").click(function () {
-        if (!recorder.isRecording()) {
+
+        recorder.recording = !recorder.recording;
+
+        if (recorder.isRecording()) {
             recorder.reset();
             startPlaying();
         }
 
-        recorder.recording = !recorder.recording;
         updateState();
     });
 
     // Timed record button
     $("#timed_record").click(function() {
-        if (!recorder.isRecording()) {
+        recorder.recording = !recorder.recording;
+
+        if (recorder.isRecording()) {
             recorder.reset();
 
             var time = prompt("Please select a duration (HH:MM:SS format)", "10:00");
@@ -370,7 +374,6 @@ GM_addStyle("#finite_jukebox_buttons > .cbut { margin: 2px; } ");
             startPlaying();
         }
 
-        recorder.recording = !recorder.recording;
         updateState();
     });
 
